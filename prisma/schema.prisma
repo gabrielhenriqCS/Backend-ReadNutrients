@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Consults {
+  id        Int      @id @default(autoincrement())
+  codeBar   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    Int?
+
+  @@map("consults")
+}
+
+model NutritionData {
+  id           Int     @id @default(autoincrement())
+  protein      Float
+  carbohydrate Float
+  sugar        Float
+  gluten       Boolean
+  fat          Float
+  lactose      Boolean
+  energy       Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  description Description? @relation(fields: [descriptionId], references: [id])
+  descriptionId  Int?  @unique
+}
+
+model Description {
+  id              Int            @id @default(autoincrement())
+  name            String?
+  nutritionalInfo NutritionData? @relation
+
+  @@index([name])
+}
