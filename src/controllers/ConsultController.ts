@@ -1,39 +1,59 @@
 import { Request, Response } from "express";
 import { prisma } from "../database";
-import { CreateConsultService } from "../services/CreateConsults";
 import { ConsultsRepo } from "../repositories/ConsultsRepo";
+import { ListConsultsServices } from "../services/ListConsults";
 
-export default {
+const ConsultRepo = new ConsultsRepo();
+const ListConsults = new ListConsultsServices(ConsultRepo);
+export class ConsultaController {
   async createConsult(req: Request, res: Response) {
     try {
-      const { id, codeBar, userId } = req.body;
+      const { id, codeBar } = req.body;
 
-      const createConsult = new CreateConsultService(new ConsultsRepo()); 
+      const consults = await ListConsults.execute(id, codeBar);
+      // Validação básica
+      if (!consults) {
+        return res.status(400).json({
+          message: "O campo é obrigatório.",
+        });
+      }
 
-      const consult = await createConsult.execute(
-         id, codeBar, userId
-      );
-
-      return res.json({
-        error: false,
-        message: "Consulta realizada com sucesso!",
-        consult,
+      return res.status(201).json({
+        message: "Consulta realizada com sucesso!", consults
       });
     } catch (error) {
-      return res.json({
-        message: error
+      return res.status(500).json({
+        message: "Erro ao realizar consulta!",
       });
     }
-  },
+  }
 
-  async listConsult(req: Request, res: Response) {
+  async deleteConsult(req: Request, res: Response) {
     try {
-      const consult = await prisma.consults.findMany();
-      return res.json(consult);
-    } catch (error) {
+      const { id } = req.params;
+
+      // Verifica se a consulta existe antes de deletar
+      const consult = await prisma.consults.findUnique({
+        where: { id: Number(id) },
+      });
+
+      if (!consult) {
+        return res.status(404).json({
+          message: "Consulta não encontrada!",
+        });
+      }
+
+      await prisma.consults.delete({
+        where: { id: Number(id) },
+      });
+
       return res.json({
-        message: error,
+        message: "Consulta excluída com sucesso!",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: "Erro ao excluir consulta!"
       });
     }
-  },
-};
+  }
+}

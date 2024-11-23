@@ -13,32 +13,30 @@ model Consults {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId    Int?
-
   @@map("consults")
 }
 
 model NutritionData {
   id           Int     @id @default(autoincrement())
-  protein      Float
-  carbohydrate Float
-  sugar        Float
-  gluten       Boolean
-  fat          Float
-  lactose      Boolean
-  energy       Float
+  protein      Float   @default(0.0)
+  carbohydrate Float   @default(0.0)
+  sugar        Float   @default(0.0)
+  gluten       Boolean @default(false) 
+  fat          Float   @default(0.0)
+  lactose      Boolean @default(false)
+  energy       Float   @default(0.0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  description Description? @relation(fields: [descriptionId], references: [id])
-  descriptionId  Int?  @unique
+  description Description @relation(fields: [descriptionId], references: [id])
+  descriptionId  Int  @unique
 }
 
 model Description {
   id              Int            @id @default(autoincrement())
-  name            String?
+  name            String
   nutritionalInfo NutritionData? @relation
 
-  @@index([name])
+  @@map("listdescription")
 }

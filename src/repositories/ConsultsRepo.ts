@@ -1,16 +1,17 @@
-import { Consults } from "@prisma/client";
 import { prisma } from "../database";
-import { IConsults } from "../interfaces/IConsults";
+import { IConsults, Consult } from "../interfaces/IConsults";
+
 
 export class ConsultsRepo implements IConsults {
-    public async createConsult(id: number, codeBar: string, userId: number): Promise<Consults> {
+    public async createConsult(id: number, codeBar: string): Promise<Consult> {
         const post = await prisma.consults.create({
             data: {
                 id,
-                codeBar,
-                userId
+                codeBar
             }
         })
         return post
     }
+
 }
+
