@@ -19,14 +19,12 @@ const deleteConsultController = new ConsultaController();
 
 app.get("/", (req, res) => {
     res.json({
-        message: "hello world"
+        message: "teste"
     })
 })
 
 app.post("/consultar", createConsultController.createConsult.bind(createConsultController));
-
 app.get("/listar/:id", listConsultController.listConsult.bind(listConsultController));
-
 app.delete("/excluir/:id", deleteConsultController.deleteConsult.bind(deleteConsultController));
 
 app.listen(PORT, () => {

@@ -19,7 +19,7 @@ export class ConsultaController {
       }
 
       return res.status(201).json({
-        message: "Consulta realizada com sucesso!", consults
+         consults
       });
     } catch (error) {
       return res.status(500).json({
@@ -30,23 +30,38 @@ export class ConsultaController {
 
   async deleteConsult(req: Request, res: Response) {
     try {
-      const { id } = req.params;
-
+      const { id, codeBar } = req.body;
+  
+      // Validação básica de entrada
+      if (!id || !codeBar) {
+        return res.status(400).json({
+          message: "ID e código de barras são obrigatórios!",
+        });
+      }
+  
       // Verifica se a consulta existe antes de deletar
       const consult = await prisma.consults.findUnique({
         where: { id: Number(id) },
       });
-
+  
       if (!consult) {
         return res.status(404).json({
           message: "Consulta não encontrada!",
         });
       }
-
+  
+      // Verifica se o código de barras coincide
+      if (consult.codeBar !== codeBar) {
+        return res.status(400).json({
+          message: "Código de barras não coincide!",
+        });
+      }
+  
+      // Exclui a consulta
       await prisma.consults.delete({
         where: { id: Number(id) },
       });
-
+  
       return res.json({
         message: "Consulta excluída com sucesso!",
       });
@@ -55,5 +70,5 @@ export class ConsultaController {
         message: "Erro ao excluir consulta!"
       });
     }
-  }
+  }  
 }
