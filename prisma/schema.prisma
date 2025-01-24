@@ -11,32 +11,26 @@ model Consults {
   id        Int      @id @default(autoincrement())
   codeBar   String   @unique
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  NutritionData NutritionData[]
 
   @@map("consults")
 }
 
 model NutritionData {
   id           Int     @id @default(autoincrement())
-  protein      Float   @default(0.0)
-  carbohydrate Float   @default(0.0)
-  sugar        Float   @default(0.0)
+  protein      Float   
+  carbohydrate Float   
+  sugar        Float   
   gluten       Boolean @default(false) 
-  fat          Float   @default(0.0)
+  fat          Float   
   lactose      Boolean @default(false)
-  energy       Float   @default(0.0)
+  energy       Float   
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  description Description @relation(fields: [descriptionId], references: [id])
-  descriptionId  Int  @unique
+  @@map("nutritiondata")
+  Consults Consults[]
 }
 
-model Description {
-  id              Int            @id @default(autoincrement())
-  name            String
-  nutritionalInfo NutritionData? @relation
 
-  @@map("listdescription")
-}

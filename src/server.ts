@@ -1,8 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import { ConsultaController } from "./controllers/ConsultController";
-import { ListConsultController } from "./controllers/ListConsultController";
+import { ConsultaController } from "./controllers/Controller";
 
 
 dotenv.config();
@@ -14,7 +13,6 @@ app.use(express.json());
 app.use(cors());
 
 const createConsultController = new ConsultaController();
-const listConsultController = new ListConsultController();
 const deleteConsultController = new ConsultaController();
 
 app.get("/", (req, res) => {
@@ -24,10 +22,10 @@ app.get("/", (req, res) => {
 })
 
 app.post("/consultar", createConsultController.createConsult.bind(createConsultController));
-app.get("/listar/:id", listConsultController.listConsult.bind(listConsultController));
+
 app.delete("/excluir/:id", deleteConsultController.deleteConsult.bind(deleteConsultController));
 
 app.listen(PORT, () => {
-    console.log(`servidor rodando na porta ${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
 
