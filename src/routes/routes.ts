@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { Controller } from '../controllers/Controller';
+import { listControl } from '../controllers/ListControl';
+import { deleteControl } from '../controllers/DeleteControl';
+import { createControl } from '../controllers/CreateControl';
 
 const router = Router();
-const controller = new Controller();
 
-router.get('/consults/:id', controller.listConsult);
-router.post('/consults/:id', controller.createConsult);
-router.delete('/consults/:id', controller.deleteConsult);
+router.get('/consultadenutrientes/lists', listControl);
+router.post('/consultar/', createControl);
+router.delete('/consults/deleteconsults', deleteControl);
 
 export default router;

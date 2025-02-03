@@ -9,28 +9,9 @@ datasource db {
 
 model Consults {
   id        Int      @id @default(autoincrement())
-  codeBar   String   @unique
-  createdAt DateTime @default(now())
-  NutritionData NutritionData[]
-
-  @@map("consults")
+  titulo  String
+  dados    Json
 }
 
-model NutritionData {
-  id           Int     @id @default(autoincrement())
-  protein      Float   
-  carbohydrate Float   
-  sugar        Float   
-  gluten       Boolean @default(false) 
-  fat          Float   
-  lactose      Boolean @default(false)
-  energy       Float   
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("nutritiondata")
-  Consults Consults[]
-}
 
 

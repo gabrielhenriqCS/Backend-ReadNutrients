@@ -1,31 +1,16 @@
-import { prisma } from "../database/db";
-import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export class CreateConsultService {
-  async handle(req: Request, res: Response): Promise<Response> {
-    try {
-      const { codeBar } = req.params;
-
-      if (!codeBar) {
-        return res.status(400).json({
-          message: "Código inválido",
+    async execute(data: { titulo: string; dados: any }) {
+        // Cria uma nova consulta no banco de dados
+        const consult = await prisma.consults.create({
+            data: {
+                titulo: data.titulo,
+                dados: data.dados,
+            },
         });
-      }
-
-      const consult = await prisma.consults.create({
-        data: {
-          codeBar: codeBar,
-        },
-      });
-
-      res.status(201).json({
-        consult,
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: "Erro ao realizar consulta!",
-      });
+        return consult;
     }
-    
-  }
 }
