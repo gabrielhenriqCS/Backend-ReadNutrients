@@ -6,7 +6,7 @@ import { createControl } from '../controllers/CreateControl';
 const router = Router();
 
 router.get('/consultadenutrientes/lists', listControl);
-router.post('/consultar/', createControl);
+router.post('/consultarnutrientes/', createControl);
 router.delete('/consults/deleteconsults', deleteControl);
 
 export default router;
