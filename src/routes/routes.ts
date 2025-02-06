@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { listControl } from '../controllers/ListControl';
-import { deleteControl } from '../controllers/DeleteControl';
-import { createControl } from '../controllers/CreateControl';
+import { listConsults } from '../controllers/listConsults';
+import { deleteConsult } from '../controllers/deleteConsult';
+import { getNutrition } from '../controllers/getDadosNutricionais';
 
 const router = Router();
 
-router.get('/consultadenutrientes/lists', listControl);
-router.post('/consultarnutrientes/', createControl);
-router.delete('/consults/deleteconsults', deleteControl);
+router.get('/consultadenutrientes/lists', listConsults);
+router.post('/consultarnutrientes/', getNutrition);
+router.delete('/consults/:id', deleteConsult);
 
 export default router;
