@@ -1,11 +1,14 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from '../database/db';
+import { Consults } from '@prisma/client';
 
 export class ListHistoricoService {
-    async get() {
-        // Lista todas as consultas no banco de dados
-        const consults = await prisma.consults.findMany();
-        return consults;
+    async get(): Promise<Consults[]> {
+        try {
+            const consults = await prisma.consults.findMany();
+            return consults as Consults[];
+        } catch (error) {
+            console.error("Erro ao buscar consultas:", error);
+            throw error;
+        }
     }
 }

@@ -1,8 +1,8 @@
+import { prisma } from '../database/db';
 
 export interface GeminiResponse {
     choices: [{
         text: string;
-        image: string;
     }]
 }
 
@@ -11,4 +11,11 @@ export interface Nutrition {
     proteinas?: string;
     gorduras?: string;
     fibra?: string;
+}
+
+export interface Consults {
+    id: number;
+    date: Date;
+    titulo: string;
+    dados: Nutrition;
 }
