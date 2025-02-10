@@ -5,7 +5,7 @@ import { getNutrition } from '../controllers/getDadosNutricionais';
 
 const router = Router();
 
-router.get('/consultadenutrientes/historic?page=1&limit=10', listConsults);
+router.get('/consultadenutrientes/historic/:barcode', listConsults);
 router.post('/consultarnutrientes/', getNutrition);
 router.delete('/consults/:id', deleteConsult);
 

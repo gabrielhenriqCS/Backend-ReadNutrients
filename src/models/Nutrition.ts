@@ -1,4 +1,3 @@
-import { prisma } from '../database/db';
 
 export interface GeminiResponse {
     choices: [{
