@@ -5,7 +5,7 @@ export class ListHistoricoService {
     async get(): Promise<Consults[]> {
         try {
             const consults = await prisma.consults.findMany();
-            return consults as Consults[];
+            return consults;
         } catch (error) {
             console.error("Erro ao buscar consultas:", error);
             throw error;

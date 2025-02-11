@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { getNutritionFromGemini, extractNutritionFacts } from '../services/geminiService';
-import { Consults, Nutrition } from '../models/Nutrition'; // Import the Consults and Nutrition types
+import { Nutrition } from '../models/Nutrition'; // Importa o tipo Nutrition
 
 export const getNutrition = async (req: Request, res: Response): Promise<void> => {
     const { code: barcode } = req.body;
@@ -11,51 +11,40 @@ export const getNutrition = async (req: Request, res: Response): Promise<void> =
         const geminiResponse = await getNutritionFromGemini(barcode);
 
         if (!geminiResponse) {
-            res.status(500).json({
+             res.status(500).json({ // Usa return para sair da função
                 success: false,
                 message: 'Erro ao consultar a API Gemini.'
             });
             return;
         }
 
-        const nutrition = extractNutritionFacts(geminiResponse, "Alimento");
+        const nutrition = extractNutritionFacts(geminiResponse); // Remove o argumento "..."
 
-        if (!nutrition) {
-            res.status(500).json({
-                success: false,
-                message: "Não foi possível extrair os dados."
-            });
-            return;
-        }
+        // **PROBLEMA RESOLVIDO:**  `nutrition` JÁ contém os dados nutricionais.
+        // Não é necessário criar um objeto separado `consult.datas`.
 
-        // Validate the extracted nutrition data:
-        if (!nutrition.dados || !nutrition.dados.carboidratos || !nutrition.dados.proteinas || !nutrition.dados.gorduras || !nutrition.dados.fibra) {
-            console.error("Dados nutricionais incompletos:", nutrition?.dados);
-            res.status(500).json({
-                success: false,
-                message: "Dados nutricionais incompletos."
-            });
-            return;
-        }
-
-        const consult: Consults = { // Create the Consults object
-            id: 0, // Or generate a proper ID
+        const consult: Nutrition = {
+            id: 0, // Ou um ID gerado corretamente (UUID)
             date: new Date(),
-            titulo: "Alimento", // Or get the title from Gemini if available
-            dados: nutrition.dados as Nutrition, // Use the validated nutrition data
+            title: "Alimento", // Ou obtido do Gemini (se aplicável)
+            carboidratos: nutrition.carboidratos,
+            proteinas: nutrition.proteinas,
+            gorduras: nutrition.gorduras,
+            fibra: nutrition.fibra,
         };
 
         res.status(200).json({
             success: true,
             message: "Dados nutricionais obtidos com sucesso!",
-            data: consult // Send the Consults object
+            data: consult
         });
-
+        return;
     } catch (error: any) {
         console.error("Erro na função getNutrition:", error);
-        res.status(500).json({
+         res.status(500).json({  //Adicionei o return
             success: false,
-            message: "Erro interno do servidor."
+            message: error.message || "Erro interno do servidor."  // Inclui a mensagem de erro
         });
+        return
     }
 };

@@ -9,9 +9,9 @@ export const listConsults = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { data, titulo } = req.query;
+    const { id, data, titulo } = req.query;
 
-    console.log("Parâmetros recebidos:", { data, titulo });
+    console.log("Parâmetros recebidos:", { id, data, titulo });
 
     // Buscar consultas reais do banco de dados
     const consults: Consults[] = await list_historico.get();
@@ -29,13 +29,15 @@ export const listConsults = async (
 
     res.status(200).json({
       success: true,
-      data: filterConsults,
+      data: id, filterConsults,
     });
+    return;
   } catch (error) {
     console.error("Erro ao listar consultas:", error);
     res.status(500).json({
       success: false,
       message: "Erro ao listar consultas!",
     });
+    return;
   }
 };

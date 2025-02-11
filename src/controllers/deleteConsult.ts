@@ -15,9 +15,10 @@ export const deleteConsult = async (req: Request, res: Response): Promise<any> =
     await deleteConsultService.delete(Number(id));
 
     res.status(204).end(); // 204 No Content (sucesso, sem conteúdo na resposta)
-
+    return;
   } catch (error) {
     console.error("Erro ao deletar consulta:", error);
     res.status(500).json({ error: 'Erro interno do servidor.' });
+    return;
   }
 };

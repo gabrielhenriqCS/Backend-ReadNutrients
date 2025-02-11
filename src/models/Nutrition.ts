@@ -6,15 +6,18 @@ export interface GeminiResponse {
 }
 
 export interface Nutrition {
+    id?: number;
+    title?: string;
+    date?: Date;
+    datas?: {
+        carboidratos?: string;
+        proteinas?: string;
+        gorduras?: string;
+        fibra?: string; 
+    }
     carboidratos?: string;
     proteinas?: string;
     gorduras?: string;
     fibra?: string;
 }
 
-export interface Consults {
-    id: number;
-    date: Date;
-    titulo: string;
-    dados: Nutrition;
-}
