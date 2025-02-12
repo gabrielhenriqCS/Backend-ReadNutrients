@@ -5,8 +5,8 @@ import { getNutrition } from '../controllers/getDadosNutricionais';
 
 const router = Router();
 
-router.get('/nutriconsults/historic/:barcode', listConsults);
-router.post('/nutriconsults/', getNutrition);
+router.get('/nutritionconsults/historic/:barcode', listConsults);
+router.post('/nutritionconsults/', getNutrition);
 router.delete('/consults/:id', deleteConsult);
 
 export default router;

@@ -5,10 +5,10 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 console.log("GEMINI_API_KEY:", GEMINI_API_KEY);
 
-export async function getNutritionFromGemini(barcode: string): Promise<GeminiResponse> {
+export async function getNutritionFromGemini(barcode: string): Promise<GeminiResponse | undefined> {
     if (!GEMINI_API_KEY) {
         console.error("Chave de API Gemini não configurada.");
-        throw new Error("Chave de API Gemini não configurada."); // Lança um erro
+        throw new Error("Chave de API Gemini não configurada."); 
     }
 
     try {
@@ -20,7 +20,6 @@ export async function getNutritionFromGemini(barcode: string): Promise<GeminiRes
             }
         };
 
-        console.log("Corpo da requisição:", JSON.stringify(requestBody, null, 2));
         console.log("URL: ", GEMINI_API_URL);
 
         const response = await fetch(GEMINI_API_URL, {
@@ -35,14 +34,15 @@ export async function getNutritionFromGemini(barcode: string): Promise<GeminiRes
         if (!response.ok) {
             const errorData = await response.text();
             console.error('Erro ao consultar Gemini:', response.status, errorData);
-            throw new Error(`Erro ao consultar Gemini: ${response.status}`); // Lança um erro
+            return;
         }
 
         const data: GeminiResponse = await response.json();
-        return data; // Retorna a resposta sem se preocupar com serialização imediata
+        console.log("Resposta Gemini:", data);
+        return data; 
     } catch (error: any) {
-        console.error('Erro ao consultar Gemini:', error);
-        throw new Error(`Erro ao consultar Gemini: ${error.message}`); // Lança um erro
+        console.error('Erro ao consultar Gemini:');
+        return;
     }
 }
 
@@ -56,14 +56,6 @@ function extrairValor(texto: string, chave: string): string | undefined {
     const indiceValor = indiceChave + chave.length + 2; // +2 para ": "
     const indiceProximoValor = texto.indexOf('\n', indiceValor); // Encontra a próxima linha
     const valor = indiceProximoValor === -1 ? texto.substring(indiceValor) : texto.substring(indiceValor, indiceProximoValor).trim();
-
-    if (valor === undefined) {
-        return undefined;
-    }
-
-    if (typeof valor === 'object' && valor !== null) {
-        return JSON.stringify(valor); // Não é ideal, repensar isso (explicado abaixo)
-    }
 
     return valor;
 }
@@ -88,10 +80,12 @@ export function extractNutritionFacts(geminiResponse: GeminiResponse): Nutrition
     }
 
     const nutrition: Nutrition = {
-        carboidratos: carboidratos,
-        proteinas: proteinas,
-        gorduras: gorduras,
-        fibra: fibra,
+        datas: {
+            carboidratos,
+            proteinas,
+            gorduras,
+            fibra
+        }
     };
 
     return nutrition;

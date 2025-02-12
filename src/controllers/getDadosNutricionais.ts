@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { getNutritionFromGemini, extractNutritionFacts } from '../services/geminiService';
-import { Nutrition } from '../models/Nutrition'; // Importa o tipo Nutrition
+import { Nutrition } from '../models/Nutrition'; 
 
 export const getNutrition = async (req: Request, res: Response): Promise<void> => {
     const { code: barcode } = req.body;
@@ -18,15 +18,12 @@ export const getNutrition = async (req: Request, res: Response): Promise<void> =
             return;
         }
 
-        const nutrition = extractNutritionFacts(geminiResponse); // Remove o argumento "..."
+        const nutrition = extractNutritionFacts(geminiResponse); 
 
-        // **PROBLEMA RESOLVIDO:**  `nutrition` JÁ contém os dados nutricionais.
-        // Não é necessário criar um objeto separado `consult.datas`.
 
         const consult: Nutrition = {
-            id: 0, // Ou um ID gerado corretamente (UUID)
+            id: 0, 
             date: new Date(),
-            title: "Alimento", // Ou obtido do Gemini (se aplicável)
             carboidratos: nutrition.carboidratos,
             proteinas: nutrition.proteinas,
             gorduras: nutrition.gorduras,
