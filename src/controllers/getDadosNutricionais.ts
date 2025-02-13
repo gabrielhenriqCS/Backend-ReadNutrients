@@ -8,21 +8,20 @@ export const getNutrition = async (req: Request, res: Response): Promise<void> =
     console.log("Código de barras recebido:", barcode);
 
     try {
-        const geminiResponse = await getNutritionFromGemini(barcode);
+        const geminiResponseText = await getNutritionFromGemini(barcode); // Obtém o texto da resposta
 
-        if (!geminiResponse) {
-             res.status(500).json({ // Usa return para sair da função
+        if (!geminiResponseText) {
+            res.status(500).json({
                 success: false,
-                message: 'Erro ao consultar a API Gemini.'
+                message: 'Falha ao consultar a API Gemini.',
             });
             return;
         }
 
-        const nutrition = extractNutritionFacts(geminiResponse); 
-
+        const nutrition: Nutrition = extractNutritionFacts(geminiResponseText); // Extrai os dados nutricionais
 
         const consult: Nutrition = {
-            id: 0, 
+            id: 0,
             date: new Date(),
             carboidratos: nutrition.carboidratos,
             proteinas: nutrition.proteinas,
@@ -38,10 +37,10 @@ export const getNutrition = async (req: Request, res: Response): Promise<void> =
         return;
     } catch (error: any) {
         console.error("Erro na função getNutrition:", error);
-         res.status(500).json({  //Adicionei o return
+        res.status(500).json({
             success: false,
-            message: error.message || "Erro interno do servidor."  // Inclui a mensagem de erro
+            message: `Erro interno do servidor: ${error.message}`  // Inclui a mensagem de erro
         });
-        return
+        return;
     }
 };

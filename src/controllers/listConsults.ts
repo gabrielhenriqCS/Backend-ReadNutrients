@@ -29,7 +29,7 @@ export const listConsults = async (
 
     res.status(200).json({
       success: true,
-      data: id, filterConsults,
+      data: filterConsults,
     });
     return;
   } catch (error) {
