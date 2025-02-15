@@ -21,7 +21,7 @@ export const listConsults = async (
     // Filtrando os resultados com base nos parâmetros da requisição
     const filterConsults: Consults[] = consults.filter((consult) => {
       const dataMatch = !data || String(consult.data) === String(data);
-      const titleMatch = !titulo || consult.titulo.toLowerCase().includes(String(titulo).toLowerCase());
+      const titleMatch = !titulo || consult.title.toLowerCase().includes(String(titulo).toLowerCase());
       return dataMatch && titleMatch;
     });
 
