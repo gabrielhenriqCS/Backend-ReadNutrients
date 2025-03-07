@@ -9,8 +9,6 @@ A **API ReadNutrients** é uma aplicação que permite consultar informações n
 - **PostgreSQL** (via Prisma)
 - **TypeScript**
 - **Google Generative AI** para consulta de dados
-- **Next.js** para a interface de exibição
-- **Tailwind CSS** para estilização
 
 ## Como Usar
 A API está em produção e pode ser acessada no seguinte endpoint:
