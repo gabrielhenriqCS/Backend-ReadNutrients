@@ -6,7 +6,7 @@ A **API ReadNutrients** é uma aplicação que permite consultar informações n
 ## Tecnologias Utilizadas
 - **Node.js** com **Express**
 - **Prisma ORM**
-- **PostgreSQL** (via Docker)
+- **PostgreSQL** (via Prisma)
 - **TypeScript**
 - **Google Generative AI** para consulta de dados
 - **Next.js** para a interface de exibição
@@ -21,22 +21,25 @@ https://api-readnutrients.com
 
 ### Exemplos de Uso
 
-#### 1. Consultar informações de um produto pelo código de barras
+#### 1. Consultar histórico dos dados nutricionais do código de barras de um produto
 
 **Requisição:**
 ```http
-GET /nutrients/{barcode}
+GET /nutritionconsults/historic
 ```
 
 **Resposta:**
 ```json
 {
-  "name": "Iogurte Natural",
-  "brand": "Marca X",
-  "calories": 150,
-  "carbohydrates": 12,
-  "proteins": 5,
-  "fats": 4
+  "id": 1,
+  "barcode": "1839464854",
+  "date": "2025-03-02",
+  "titulo": "Consulta 1"
+  "calorias": 150,
+  "carboidratos": 12,
+  "proteinas": 5,
+  "gorduras": 4,
+  "fibras": 5
 }
 ```
 
@@ -44,24 +47,30 @@ GET /nutrients/{barcode}
 
 **Requisição:**
 ```http
-POST /nutrients
+POST /nutritionconsults
 ```
 ```json
 {
-  "barcode": "1234567890123",
-  "name": "Suco de Laranja",
-  "brand": "Marca Y",
-  "calories": 80,
-  "carbohydrates": 20,
-  "proteins": 1,
-  "fats": 0
+  "barcode": "1234567890123"
 }
 ```
 
 **Resposta:**
 ```json
 {
-  "message": "Produto cadastrado com sucesso!"
+  "message": "Dados nutricionais obtidos com sucesso!",
+    "data": {
+        "title": "Consulta via Gemini API",
+        "barcode": "7896183202187",
+        "nutrition": {
+            "barcode": "7896183202187",
+            "calorias": 0,
+            "carboidratos": 0,
+            "proteinas": 0,
+            "gorduras": 0,
+            "fibra": 0
+        }
+    }
 }
 ```
 
@@ -76,11 +85,6 @@ cd API-ReadNutrients
 
 ### 2. Configure o ambiente
 Crie um arquivo `.env` baseado no `.env.example` e configure as credenciais do banco de dados e da API de IA.
-
-### 3. Suba o banco de dados com Docker
-```sh
-docker-compose up -d
-```
 
 ### 4. Instale as dependências
 ```sh
