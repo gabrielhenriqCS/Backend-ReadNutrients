@@ -27,7 +27,7 @@ model Nutrition {
   gorduras     Decimal
   fibra        Decimal
   consultId    String
-  consult      Consults @relation(fields: [consultId], references: [id], onDelete: Cascade)
+  consult      Consults? @relation(fields: [consultId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

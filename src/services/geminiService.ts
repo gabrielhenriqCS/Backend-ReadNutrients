@@ -73,7 +73,21 @@ export async function getAndSaveNutrition(barcode: string) {
 
     // Salva os dados no banco
     const savedNutrition = await prisma.nutrition.create({
-      data: { barcode, ...nutritionData },
+      data: {
+        barcode,
+        calorias: nutritionData.calorias,
+        carboidratos: nutritionData.carboidratos,
+        proteinas: nutritionData.proteinas,
+        gorduras: nutritionData.gorduras,
+        fibra: nutritionData.fibra,
+        consult: {
+          create: {
+            barcode,
+            title: "Consulta automática",
+            date: new Date(),
+          },
+        },
+      },
     });
 
     return { success: true, source: "gemini", nutrition: savedNutrition };
