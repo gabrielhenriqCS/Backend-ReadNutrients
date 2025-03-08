@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { listHistoricoService } from "../services/ListService";
+import { listHistoricoService } from "../services/listService";
 import { listHistoricoByIdService } from "../services/listByIdService";
 
 export async function listConsults(req: Request, res: Response) {

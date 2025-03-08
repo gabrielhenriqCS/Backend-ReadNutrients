@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { deleteConsultService } from "../services/DeleteService";
+import { deleteConsultService } from "../services/deleteService";
 
 export async function deleteConsult(
   req: Request,
