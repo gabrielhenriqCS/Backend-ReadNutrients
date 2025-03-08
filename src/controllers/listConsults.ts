@@ -1,43 +1,32 @@
 import { Request, Response } from "express";
-import { ListHistoricoService } from "../services/ListService";
-import { Consults } from "@prisma/client";
+import { listHistoricoService } from "../services/ListService";
+import { listHistoricoByIdService } from "../services/listByIdService";
 
-const list_historico = new ListHistoricoService();
-
-export const listConsults = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export async function listConsults(req: Request, res: Response) {
   try {
-    const { id, data, titulo } = req.query;
-
-    console.log("Parâmetros recebidos:", { id, data, titulo });
-
-    // Buscar consultas reais do banco de dados
-    const consults: Consults[] = await list_historico.get();
-
-    console.log("Consultas obtidas:", consults);
-
-    // Filtrando os resultados com base nos parâmetros da requisição
-    const filterConsults: Consults[] = consults.filter((consult) => {
-      const dataMatch = !data || String(consult.data) === String(data);
-      const titleMatch = !titulo || consult.title.toLowerCase().includes(String(titulo).toLowerCase());
-      return dataMatch && titleMatch;
-    });
-
-    console.log("Consultas filtradas:", filterConsults);
-
+    const listHistorico = await listHistoricoService();
     res.status(200).json({
-      success: true,
-      data: filterConsults,
+      listHistorico,
     });
-    return;
   } catch (error) {
     console.error("Erro ao listar consultas:", error);
     res.status(500).json({
-      success: false,
-      message: "Erro ao listar consultas!",
+      error: "Erro ao listar consultas!",
     });
-    return;
   }
-};
+}
+
+
+export async function listConsultById(req: Request, res: Response) {
+  try {
+    const listHistoricoById = await listHistoricoByIdService(req.params.id);
+    res.status(200).json({
+      listHistoricoById,
+    });
+  } catch (error) {
+    console.error("Erro em getNutritionById", error);
+    res.status(500).json({
+      error: "Erro ao buscar registro de nutrição",
+    });
+  }
+}

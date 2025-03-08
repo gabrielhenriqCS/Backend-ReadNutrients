@@ -8,11 +8,26 @@ datasource db {
 }
 
 model Consults {
-  id        Int      @id @default(autoincrement())
-  date      DateTime @default(now())
+  id        String      @id @default(uuid())
+  barcode   String
+  date      DateTime    @default(now())
   title     String
-  data      Json 
+  consultId String
+  consult   Nutrition[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
-
-
+model Nutrition {
+  id           String   @id @default(uuid())
+  barcode      String
+  calorias     Decimal
+  carboidratos Decimal
+  proteinas    Decimal
+  gorduras     Decimal
+  fibra        Decimal
+  consultId    String
+  consult      Consults @relation(fields: [consultId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

@@ -1,14 +1,18 @@
 import { prisma } from '../database/db';
-import { Consults } from '@prisma/client';
 
-export class ListHistoricoService {
-    async get(): Promise<Consults[]> {
-        try {
-            const consults = await prisma.consults.findMany();
-            return consults;
-        } catch (error) {
-            console.error("Erro ao buscar consultas:", error);
-            throw error;
-        }
+export async function listHistoricoService() {
+    try {
+        const consults = await prisma.consults.findMany({
+            orderBy: {
+                date: 'desc'
+            },
+            include: {
+                consult: true,
+            }
+        });
+        return consults;
+    } catch (error) {
+        console.error("Erro ao buscar consultas:", error);
+        throw new Error("Erro ao buscar consultas!");
     }
 }

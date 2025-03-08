@@ -1,12 +1,16 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../database/db";
 
-const prisma = new PrismaClient();
 
-export class DeleteConsultService {
-    async delete(id: number) {
-        const consult = await prisma.consults.delete({
-            where: { id },
+export async function deleteConsultService(id: string, barcode: string) {
+    try {
+        await prisma.consults.delete({
+            where: {
+                id: id,
+                barcode: barcode
+            }
         });
-        return consult;
+    } catch (error) {
+        console.error("Erro ao deletar consulta:", error);
+        throw new Error("Erro ao deletar consulta!");
     }
 }

@@ -1,89 +1,88 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { prisma } from "../database/db";
 import { Nutrition } from "../models/Nutrition";
 
+// Função para obter a chave da API
 function getApiKey(): string {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.error("Chave de API Gemini não configurada.");
-    throw new Error("Chave de API Gemini não configurada.");
+    throw new Error("Chave de API não configurada.");
   }
   return apiKey;
 }
 
-// Função para inicializar o modelo Gemini
-export function createGeminiModel(apiKey: string) {
-  const genAI = new GoogleGenerativeAI(apiKey);
-  return genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Ou gemini-pro
+// Inicializa o modelo Gemini
+function createGeminiModel() {
+  return new GoogleGenerativeAI(getApiKey()).getGenerativeModel({
+    model: "gemini-2.0-flash",
+  });
 }
 
-// Função para consultar o Gemini e obter os dados nutricionais
-export async function getNutritionFromGemini(
-  barcode: string
-): Promise<string | undefined> {
-  try {
-    const apiKey = getApiKey();
-    const model = createGeminiModel(apiKey);
-
-    const prompt = `Valores nutricionais do produto com código de barras ${barcode}`;
-
-    const result = await model.generateContent(prompt);
-    return result.response.text(); // Retorna o texto da resposta
-  } catch (error: any) {
-    console.error("Erro ao consultar Gemini:", error);
-    throw error; // Propaga o erro
-  }
+// Extrai valores numéricos do texto com regex
+function extractValue(text: string, key: string): number {
+  const match = text.match(new RegExp(`${key}:\\s*([\\d.,]+)`, "i"));
+  return match ? parseFloat(match[1].replace(",", ".")) || 0 : 0;
 }
 
-// Função para extrair os fatos nutricionais do texto
-export function extractNutritionFacts(geminiResponseText: string): Nutrition {
-  if (!geminiResponseText) {
-    console.error("Resposta Gemini inválida ou incompleta.");
-    throw new Error("Resposta Gemini inválida ou incompleta.");
-  }
-
-  const calorias = parseInt(
-    extrairValor(geminiResponseText, "Calorias") ?? "",
-    0
-  );
-  const carboidratos = parseInt(
-    extrairValor(geminiResponseText, "Carboidratos") ?? "",
-    0
-  );
-  const proteinas = parseInt(
-    extrairValor(geminiResponseText, "Proteínas") ?? "",
-    0
-  );
-  const gorduras = parseInt(
-    extrairValor(geminiResponseText, "Gorduras") ?? "",
-    0
-  );
-  const fibra = parseInt(extrairValor(geminiResponseText, "Fibra") ?? "", 0);
-
+// Processa o texto da resposta para obter dados nutricionais
+function parseNutritionData(responseText: string): Nutrition {
   return {
-    date: new Date().toISOString(),
-    datas: {
-      calorias,
-      carboidratos,
-      proteinas,
-      gorduras,
-      fibra,
-    },
+    calorias: extractValue(responseText, "Calorias"),
+    carboidratos: extractValue(responseText, "Carboidratos"),
+    proteinas: extractValue(responseText, "Proteínas"),
+    gorduras: extractValue(responseText, "Gorduras"),
+    fibra: extractValue(responseText, "Fibra"),
   };
 }
 
-// Função auxiliar para extrair valores
-export function extrairValor(texto: string, chave: string): string | undefined {
-  const indiceChave = texto.indexOf(chave);
-  if (indiceChave === -1) {
-    return undefined;
+// Busca os dados no banco ou consulta a API Gemini
+export async function getAndSaveNutrition(barcode: string) {
+  try {
+    // Verifica se os dados já existem no banco
+    const existingData = await prisma.nutrition.findUnique({
+      where: { id: barcode },
+    });
+    if (existingData) {
+      return { success: true, source: "database", nutrition: existingData };
+    }
+
+    // Consulta Gemini para obter os dados nutricionais
+    const model = createGeminiModel();
+    const result = await model.generateContent(
+      `Valores nutricionais do produto com código de barras ${barcode}`
+    );
+    if (!result?.response) {
+      throw new Error("Resposta inválida da API Gemini");
+    }
+
+    const responseText = await result.response.text();
+    const nutritionData = parseNutritionData(responseText);
+
+    // Valida se os dados foram extraídos corretamente
+    if (
+      !nutritionData.calorias &&
+      !nutritionData.carboidratos &&
+      !nutritionData.proteinas &&
+      !nutritionData.gorduras &&
+      !nutritionData.fibra
+    ) {
+      throw new Error(
+        "Não foi possível extrair dados nutricionais da resposta."
+      );
+    }
+
+    // Salva os dados no banco
+    const savedNutrition = await prisma.nutrition.create({
+      data: { barcode, ...nutritionData },
+    });
+
+    return { success: true, source: "gemini", nutrition: savedNutrition };
+  } catch (error) {
+    console.error("Erro ao buscar/salvar dados nutricionais:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Erro ao processar os dados.",
+    };
   }
-
-  const indiceValor = indiceChave + chave.length + 2; // +2 para ": "
-  const indiceProximoValor = texto.indexOf("\n", indiceValor); // Encontra a próxima linha
-  const valor =
-    indiceProximoValor === -1
-      ? texto.substring(indiceValor)
-      : texto.substring(indiceValor, indiceProximoValor).trim();
-
-  return valor;
 }

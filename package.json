@@ -34,7 +34,7 @@
     "migrations": "^1.6.1",
     "package_name": "^1.0.0",
     "react-barcode-reader": "^0.0.2",
-    "uuid": "^11.0.5",
+    "uuid": "^11.1.0",
     "zod": "^3.24.1"
   }
 }
