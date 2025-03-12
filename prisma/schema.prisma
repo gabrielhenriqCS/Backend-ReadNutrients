@@ -8,26 +8,27 @@ datasource db {
 }
 
 model Consults {
-  id        String      @id @default(uuid())
-  barcode   String
-  date      DateTime    @default(now())
-  title     String
-  consultId String
-  consult   Nutrition[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id        String     @id @default(uuid())
+  barcode   String     @unique
+  date      DateTime   @default(now())
+  nutrition Nutrition?
+  createdAt DateTime   @default(now())
+
+  @@index([barcode])
 }
 
 model Nutrition {
   id           String   @id @default(uuid())
   barcode      String
-  calorias     Decimal
-  carboidratos Decimal
-  proteinas    Decimal
-  gorduras     Decimal
-  fibra        Decimal
-  consultId    String
-  consult      Consults? @relation(fields: [consultId], references: [id], onDelete: Cascade)
+  calorias     Float
+  carboidratos Float
+  proteinas    Float
+  gorduras     Float
+  fibras       Float
+  consultsId   String   @unique
+  consults     Consults @relation(fields: [consultsId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@index([barcode])
 }

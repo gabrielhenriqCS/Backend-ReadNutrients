@@ -4,7 +4,7 @@ export interface Nutrition {
     carboidratos: number;
     proteinas: number;
     gorduras: number;
-    fibra: number;
+    fibras: number;
 }
 
 export interface GeminiResponse {

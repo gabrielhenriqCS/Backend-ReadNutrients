@@ -2,20 +2,38 @@ import { Request, Response } from "express";
 import { prisma } from "../database/db";
 
 export async function getNutrition(req: Request, res: Response) {
+  const { barcode } = req.query;
+
+  if (!barcode || typeof barcode !== "string") {
+    res.status(400).json({error: "Código de barras inválido."})
+  }
+
   try {
-    const { calorias, carboidratos, proteinas, gorduras, fibra } = req.body;
-    const consult = await prisma.nutrition.findMany({
+    const history = await prisma.consults.findMany({
       where: {
-        calorias,
-        carboidratos,
-        proteinas,
-        gorduras,
-        fibra,
+        barcode: barcode as string
       },
+      include: {nutrition: true},
     });
 
-    res.status(201).json({
-      consult,
+    if (!history.length) {
+      return res.status(404).json({ error: "Nenhum histórico encontrado para o código de barras fornecido." });
+    }
+
+    const formattedHistory = history.map((consult) => ({
+      id: consult.id,
+      barcode: consult.barcode,
+      date: consult.date,
+      titulo: "Consulta pelo Gemini", // Pode ser ajustado conforme necessário
+      calorias: consult.nutrition?.calorias || 0,
+      carboidratos: consult.nutrition?.carboidratos || 0,
+      proteinas: consult.nutrition?.proteinas || 0,
+      gorduras: consult.nutrition?.gorduras || 0,
+      fibras: consult.nutrition?.fibras || 0,
+    }));
+
+    res.status(200).json({
+      formattedHistory
     });
   } catch (error) {
     console.error("Erro em getNutrition:", error);
