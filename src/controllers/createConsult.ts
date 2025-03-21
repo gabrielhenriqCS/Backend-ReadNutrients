@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { prisma } from "../database/db";
-import { createGeminiModel, parseNutritionData } from "../services/geminiService";
+import { nutritionConsults } from "../services/geminiService";
 
 export async function addNutritionConsult(req: Request, res: Response) {
-  const { barcode } = req.body;
+  const { barcode } = req.params;
 
   try {
     const existingConsult = await prisma.consults.findFirst({
@@ -22,17 +22,7 @@ export async function addNutritionConsult(req: Request, res: Response) {
       });
     }
 
-    const model = createGeminiModel();
-    const result = await model.generateContent(
-      `Valores nutricionais do produto com código de barras ${barcode}`
-    );
-
-    if (!result?.response) {
-      throw new Error("Resposta inválida da API Gemini.");
-    }
-
-    const responseText = await result.response.text();
-    const nutritionData = parseNutritionData(responseText);
+    const nutritionData = await nutritionConsults(barcode);
 
     const savedConsult = await prisma.consults.create({
       data: {

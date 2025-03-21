@@ -17,7 +17,7 @@ export async function getNutrition(req: Request, res: Response) {
     });
 
     if (!history.length) {
-      return res.status(404).json({ error: "Nenhum histórico encontrado para o código de barras fornecido." });
+      res.status(404).json({ error: "Nenhum histórico encontrado para o código de barras fornecido." });
     }
 
     const formattedHistory = history.map((consult) => ({

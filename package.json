@@ -1,5 +1,5 @@
 {
-  "name": "api2_leitura_nutrientes",
+  "name": "api_leitura_nutrientes",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -16,13 +16,14 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.1",
     "@types/node-fetch": "^2.6.12",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
     "eslint": "^9.20.1",
     "globals": "^15.14.0",
     "nodemon": "^3.1.9",
     "prisma": "^6.3.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.24.0"
+    "typescript": "^5.7.3"
   },
   "dependencies": {
     "@google-cloud/aiplatform": "^3.34.0",
@@ -32,9 +33,6 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-validator": "^7.2.1",
-    "migrations": "^1.6.1",
-    "package_name": "^1.0.0",
-    "react-barcode-reader": "^0.0.2",
     "uuid": "^11.1.0",
     "zod": "^3.24.1"
   }

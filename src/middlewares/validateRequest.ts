@@ -4,13 +4,13 @@ import { Request, Response } from "express";
 export function validateAddNutritionConsult(req: Request, res: Response) {
   const {barcode} = req.params
   if (barcode == "") {
-    res.status(400).json({
+    res.status(400).send({
       message: "Código está vazio"
     });
   };
 
   if (!barcode) {
-    res.status(404).json({
+    res.status(404).send({
       message: "Código de barras não encontrado"
     });
   }
@@ -25,13 +25,13 @@ function validarUUID(id: string): boolean {
 export function validateGetConsultById(req: Request, res: Response) {
   const { id } = req.params;
   if (!id) {
-    res.status(404).json({
+    res.status(404).send({
       message: "ID não encontrado"
     })
   }
   
   if (!validarUUID(id)) {
-    res.status(400).json({
+    res.status(400).send({
       message: "ID não é do tipo UUID"
     })
   }
