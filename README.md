@@ -1,4 +1,4 @@
-# API ReadNutrients
+# Backend ReadNutrients
 
 ## Descrição
 A **API ReadNutrients** é uma aplicação que permite consultar informações nutricionais de produtos a partir do código de barras, seja escaneado ou digitado. Utiliza inteligência artificial para buscar informações detalhadas na internet e exibir os nutrientes dos produtos.
