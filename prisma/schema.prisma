@@ -3,13 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model Consults {
   id        String     @id @default(uuid())
-  barcode   String     @unique
+  barcode   String     
   date      DateTime   @default(now())
   nutrition Nutrition?
   createdAt DateTime   @default(now())
