@@ -15,6 +15,7 @@ export class ConsultRepository {
   async createWithNutrition(barcode: string, nutritionData: any) {
     return prisma.consults.create({
       data: {
+        id: crypto.randomUUID(),
         barcode,
         date: new Date(),
         nutrition: {

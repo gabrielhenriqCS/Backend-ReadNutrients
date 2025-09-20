@@ -1,4 +1,4 @@
-import { ConsultRepository } from "../repositories/ConsultRepository";
+import { ConsultRepository } from "@/repositories/ConsultRepository";
 import { NutritionService } from "./NutritionService";
 
 export class ConsultService {

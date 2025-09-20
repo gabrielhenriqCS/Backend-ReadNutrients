@@ -1,35 +1,29 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+export class GeminiParser {
+    private genAI: GoogleGenerativeAI;
 
-function geminiModel() {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      throw new Error("Chave da API não configurada.");
-    }
-    return new GoogleGenerativeAI(apiKey);
-}
-
-
-export class getNutritionFromGemini {
-  async getNutrition(barcode: string) {
-    const gemini = geminiModel();
-    const model = gemini.getGenerativeModel({ model: "gemini-2.0-flash" });
-    const prompt = `Forneça os dados nutricionais do produto com o código de barras ${barcode}.
-  Responda com o seguinte formato:
-  Calorias: X kcal
-  Carboidratos: X g
-  Proteínas: X g
-  Gorduras: X g
-  Fibras: X g`;
-
-      const result = await model.generateContent(prompt);
-    
-      
-
-    if (!result) {
-      throw new Error("nenhuma resposta obtida.");
+    constructor(apiKey: string) {
+        if (!apiKey) {
+            throw new Error("Chave da API do Gemini não configurada.");
+        }
+        this.genAI = new GoogleGenerativeAI(apiKey);
     }
 
-    return result;
-  }
+    async parseNutritionData(productData: any): Promise<string> {
+        const model = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        const prompt = `
+        A seguir estão os dados de um produto no formato JSON:
+        
+        ${JSON.stringify(productData, null, 2)}
+        
+        Extraia as informações nutricionais e apresente-as de forma clara e objetiva, incluindo os valores de Calorias, Carboidratos, Proteínas e Gorduras.
+        Se alguma informação não estiver disponível, indique 'Não disponível'.
+        `;
+
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text();
+        return responseText;
+    }
 }

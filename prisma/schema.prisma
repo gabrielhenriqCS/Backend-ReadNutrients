@@ -7,28 +7,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Consults {
-  id        String     @id @default(uuid())
-  barcode   String     
+model consults {
+  id        String     @id
+  barcode   String     @unique(map: "Consults_barcode_key")
   date      DateTime   @default(now())
-  nutrition Nutrition?
   createdAt DateTime   @default(now())
+  nutrition nutrition?
 
-  @@index([barcode])
+  @@index([barcode], map: "Consults_barcode_idx")
 }
 
-model Nutrition {
-  id           String   @id @default(uuid())
+model nutrition {
+  id           String   @id
   barcode      String
   calorias     Float
   carboidratos Float
   proteinas    Float
   gorduras     Float
   fibras       Float
-  consultsId   String   @unique
-  consults     Consults @relation(fields: [consultsId], references: [id], onDelete: Cascade)
+  consultsId   String   @unique(map: "Nutrition_consultsId_key")
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  updatedAt    DateTime
+  consults     consults @relation(fields: [consultsId], references: [id], onDelete: Cascade, map: "Nutrition_consultsId_fkey")
 
-  @@index([barcode])
+  @@index([barcode], map: "Nutrition_barcode_idx")
 }

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 // Validação para a rota POST /nutritionconsults
-export function validateAddNutritionConsult(req: Request, res: Response) {
+export function validateBarcode(req: Request, res: Response) {
   const {barcode} = req.params
   if (barcode == "") {
     res.status(400).send({
@@ -15,6 +15,8 @@ export function validateAddNutritionConsult(req: Request, res: Response) {
     });
   }
 };
+
+
 
 // function validarUUID(id: string): boolean {
 //   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
