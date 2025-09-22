@@ -1,12 +1,15 @@
 import { ConsultService } from "@/services/ConsultService";
 import { Request, Response } from "express";
 
+interface AddConsultBody {
+    barcode: string
+}
 
 export class ConsultController {
     constructor(private consultService: ConsultService) {}
 
-    async addConsult(req: Request, res: Response) {
-        const { barcode } = req.params;
+    async addConsult(req: Request<{}, {}, AddConsultBody>, res: Response) {
+        const { barcode } = req.body;
         try {
             const result = await this.consultService.addConsult(barcode);
             res.status(result.status).json(result.body);

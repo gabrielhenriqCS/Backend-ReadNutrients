@@ -5,7 +5,7 @@ export function validateBarcode(req: Request, res: Response) {
   const {barcode} = req.params
   if (barcode == "") {
     res.status(400).send({
-      message: "Código está vazio"
+      message: "Código não pode ser vazio"
     });
   };
 

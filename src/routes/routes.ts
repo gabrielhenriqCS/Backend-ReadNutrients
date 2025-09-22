@@ -13,7 +13,7 @@ const consultController = new ConsultController(consultService);
 const router = express.Router();
 
 router.get("/nutritionconsults/historic", consultController.listConsults);
-router.post("/nutritionconsults", validateBarcode, consultController.addConsult);
+router.post("/nutritionconsults", validateBarcode, consultController.addConsult.bind(consultController));
 
 router.delete("/nutritionconsults/:id", (req, res) => {
   res.status(501).json({ error: "Não implementado" });

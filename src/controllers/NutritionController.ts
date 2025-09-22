@@ -2,17 +2,18 @@
 import { NutritionService } from "../services/NutritionService";
 import { Request, Response } from "express";
 
-const nutritionService = new NutritionService();
+const nutritionService = new NutritionService(process.env.GEMINI_API_KEY);
 
 export class NutritionController {
     async getNutrition(req: Request, res: Response) {
-        const { barcode } = req.params;
+        
+        try {
+            const { barcode } = req.params;
 
         if (!barcode) {
             return res.status(400).send({ message: "Código de barras não fornecido." });
         }
 
-        try {
             const nutritionalInfo = await nutritionService.getNutritionalInfo(barcode);
             
             return res.status(200).send({
